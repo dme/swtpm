@@ -272,8 +272,8 @@ B<PTM_STATE_FLAG_DECRYPT> flag to retrieve decrypted TPM state in case
 the TPM's state was written in encrypted form.
 
 The type field allows a user to choose one of the TPM's state blobs, and must be
-one of B<PTM_BLOB_TYPE_PERMANENT>, B<PTM_BLOB_TYPE_VOLATILE>, and
-B<PTM_BLOB_TYPE_SAVESTATE>.
+one of B<PTM_BLOB_TYPE_PERMANENT>, B<PTM_BLOB_TYPE_VOLATILE>,
+B<PTM_BLOB_TYPE_SAVESTATE> and B<PTM_BLOB_TYPE_PCR_VALUES>.
 
 The offset field indicates at what offset to read the data from. Subsequent
 state transfers must advance the offset field to the next byte to be read.

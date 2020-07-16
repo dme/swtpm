@@ -346,6 +346,8 @@ enum TPMLIB_StateType tpmlib_blobtype_to_statetype(uint32_t blobtype)
         return TPMLIB_STATE_VOLATILE;
     case PTM_BLOB_TYPE_SAVESTATE:
         return TPMLIB_STATE_SAVE_STATE;
+    case PTM_BLOB_TYPE_PCR_VALUES:
+        return TPMLIB_STATE_PCR_VALUES;
     }
     return 0;
 }

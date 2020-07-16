@@ -144,17 +144,21 @@ static int ctrlchannel_return_state(ptm_getstate *pgs, int fd)
     struct iovec iov[2];
     int iovcnt, n;
 
-    if (blobtype == PTM_BLOB_TYPE_VOLATILE)
-        res = SWTPM_NVRAM_Store_Volatile();
+    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES) {
+	res = TPMLIB_GetState(TPMLIB_STATE_PCR_VALUES, &blob, &blob_length);
+    } else {
+	if (blobtype == PTM_BLOB_TYPE_VOLATILE)
+	    res = SWTPM_NVRAM_Store_Volatile();
 
-    if (res == 0)
-        res = SWTPM_NVRAM_GetStateBlob(&blob, &blob_length,
-                                       tpm_number, blobname, decrypt,
-                                       &is_encrypted);
+	if (res == 0)
+	    res = SWTPM_NVRAM_GetStateBlob(&blob, &blob_length,
+					   tpm_number, blobname, decrypt,
+					   &is_encrypted);
 
-    /* make sure the volatile state file is gone */
-    if (blobtype == PTM_BLOB_TYPE_VOLATILE)
-        SWTPM_NVRAM_DeleteName(tpm_number, blobname, FALSE);
+	/* make sure the volatile state file is gone */
+	if (blobtype == PTM_BLOB_TYPE_VOLATILE)
+	    SWTPM_NVRAM_DeleteName(tpm_number, blobname, FALSE);
+    }
 
     if (offset < blob_length) {
         return_length = blob_length - offset;
@@ -206,6 +210,13 @@ static int ctrlchannel_receive_state(ptm_setstate *pss, ssize_t n, int fd)
     TPM_RESULT res;
     uint32_t flags = be32toh(pss->u.req.state_flags);
     TPM_BOOL is_encrypted = (flags & PTM_STATE_FLAG_ENCRYPTED) != 0;
+
+    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES) {
+        logprintf(STDERR_FILENO,
+                  "Setting the PCR values blob is not supported.\n");
+	res = TPM_BAD_PARAMETER;
+	goto err_send_resp;
+    }
 
     blob = malloc(blob_length);
     if (!blob) {
