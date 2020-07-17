@@ -144,9 +144,16 @@ static int ctrlchannel_return_state(ptm_getstate *pgs, int fd)
     struct iovec iov[2];
     int iovcnt, n;
 
-    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES) {
+    switch (blobtype) {
+    case PTM_BLOB_TYPE_PCR_VALUES:
 	res = TPMLIB_GetState(TPMLIB_STATE_PCR_VALUES, &blob, &blob_length);
-    } else {
+	break;
+
+    case PTM_BLOB_TYPE_PCR_EVENT_LOG:
+	res = TPMLIB_GetState(TPMLIB_STATE_PCR_EVENT_LOG, &blob, &blob_length);
+	break;
+
+    default:
 	if (blobtype == PTM_BLOB_TYPE_VOLATILE)
 	    res = SWTPM_NVRAM_Store_Volatile();
 
@@ -158,6 +165,7 @@ static int ctrlchannel_return_state(ptm_getstate *pgs, int fd)
 	/* make sure the volatile state file is gone */
 	if (blobtype == PTM_BLOB_TYPE_VOLATILE)
 	    SWTPM_NVRAM_DeleteName(tpm_number, blobname, FALSE);
+	break;
     }
 
     if (offset < blob_length) {
@@ -211,9 +219,11 @@ static int ctrlchannel_receive_state(ptm_setstate *pss, ssize_t n, int fd)
     uint32_t flags = be32toh(pss->u.req.state_flags);
     TPM_BOOL is_encrypted = (flags & PTM_STATE_FLAG_ENCRYPTED) != 0;
 
-    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES) {
+    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES ||
+	blobtype == PTM_BLOB_TYPE_PCR_EVENT_LOG) {
         logprintf(STDERR_FILENO,
-                  "Setting the PCR values blob is not supported.\n");
+                  "Setting the PCR %s blob is not supported.\n",
+		  blobtype == PTM_BLOB_TYPE_PCR_VALUES ? "values":"event log");
 	res = TPM_BAD_PARAMETER;
 	goto err_send_resp;
     }

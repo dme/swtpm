@@ -273,7 +273,8 @@ the TPM's state was written in encrypted form.
 
 The type field allows a user to choose one of the TPM's state blobs, and must be
 one of B<PTM_BLOB_TYPE_PERMANENT>, B<PTM_BLOB_TYPE_VOLATILE>,
-B<PTM_BLOB_TYPE_SAVESTATE> and B<PTM_BLOB_TYPE_PCR_VALUES>.
+B<PTM_BLOB_TYPE_SAVESTATE>, B<PTM_BLOB_TYPE_PCR_VALUES> and
+B<PTM_BLOB_TYPE_PCR_EVENT_LOG>.
 
 The offset field indicates at what offset to read the data from. Subsequent
 state transfers must advance the offset field to the next byte to be read.
