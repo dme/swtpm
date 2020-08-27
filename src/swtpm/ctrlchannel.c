@@ -219,11 +219,9 @@ static int ctrlchannel_receive_state(ptm_setstate *pss, ssize_t n, int fd)
     uint32_t flags = be32toh(pss->u.req.state_flags);
     TPM_BOOL is_encrypted = (flags & PTM_STATE_FLAG_ENCRYPTED) != 0;
 
-    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES ||
-	blobtype == PTM_BLOB_TYPE_PCR_EVENT_LOG) {
+    if (blobtype == PTM_BLOB_TYPE_PCR_VALUES) {
         logprintf(STDERR_FILENO,
-                  "Setting the PCR %s blob is not supported.\n",
-		  blobtype == PTM_BLOB_TYPE_PCR_VALUES ? "values":"event log");
+                  "Setting the PCR values blob is not supported.\n");
 	res = TPM_BAD_PARAMETER;
 	goto err_send_resp;
     }
