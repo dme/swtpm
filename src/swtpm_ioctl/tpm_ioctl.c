@@ -264,6 +264,8 @@ static uint32_t get_blobtype(const char *blobname)
         return PTM_BLOB_TYPE_SAVESTATE;
     if (!strcmp(blobname, "pcrvalues"))
         return PTM_BLOB_TYPE_PCR_VALUES;
+    if (!strcmp(blobname, "pcreventlog"))
+        return PTM_BLOB_TYPE_PCR_EVENT_LOG;
     return 0;
 }
 
@@ -816,9 +818,10 @@ static void usage(const char *prgname)
 "                        read from stdin\n"
 "--save <type> <file>  : store the TPM state blob of given type in a file;\n"
 "                        type may be one of volatile, permanent, savestate,\n"
-"                        or pcrvalues\n"
+"                        pcrvalues, or pcreventlog\n"
 "--load <type> <file>  : load the TPM state blob of given type from a file;\n"
-"                        type may be one of volatile, permanent, or savestate\n"
+"                        type may be one of volatile, permanent, savestate,\n"
+"                        or pcreventlog\n"
 "-g                    : get configuration flags indicating which keys are in\n"
 "                        use\n"
 "-b <buffersize>       : set the buffer size of the TPM and get its current\n"

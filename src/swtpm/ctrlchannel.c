@@ -261,8 +261,16 @@ static int ctrlchannel_receive_state(ptm_setstate *pss, ssize_t n, int fd)
         }
     }
 
-    res = SWTPM_NVRAM_SetStateBlob(blob, blob_length, is_encrypted,
-                                   tpm_number, blobtype);
+    switch (blobtype) {
+    case PTM_BLOB_TYPE_PCR_EVENT_LOG:
+	res = TPMLIB_SetState(TPMLIB_STATE_PCR_EVENT_LOG, blob, blob_length);
+	break;
+
+    default:
+	res = SWTPM_NVRAM_SetStateBlob(blob, blob_length, is_encrypted,
+				       tpm_number, blobtype);
+	break;
+    }
 
 err_send_resp:
     pss->u.resp.tpm_result = htobe32(res);
