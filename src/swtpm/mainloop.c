@@ -71,6 +71,8 @@ bool tpm_running = false;
 
 bool mainloop_terminate;
 
+static struct mainLoopParams *mainloopparams;
+
 TPM_RESULT
 mainloop_cb_get_locality(TPM_MODIFIER_INDICATOR *loc,
                          uint32_t tpmnum)
@@ -84,6 +86,29 @@ TPM_RESULT
 mainloop_cb_notify(const char *data,
 		   const uint32_t length)
 {
+    if (mainloopparams && mainloopparams->notifyfd >= 0) {
+	ssize_t r;
+
+	SWTPM_PrintAll(" mainloop_cb_notify:", " ",
+		       (unsigned char *)data, length);
+	r = write_full(mainloopparams->notifyfd, data, length);
+
+        if (r < 0 || r != length) {
+	    if (r < 0) {
+		logprintf(STDERR_FILENO,
+			  "Error: Could not send notification: %s\n",
+			  strerror(errno));
+	    }
+	    if (r != length) {
+		logprintf(STDERR_FILENO,
+			  "Error: Could not send notification: %d bytes written\n",
+			  r);
+	    }
+	    close(mainloopparams->notifyfd);
+	    mainloopparams->notifyfd = -1;
+        }
+    }
+
     return TPM_SUCCESS;
 }
 
@@ -118,6 +143,9 @@ int mainLoop(struct mainLoopParams *mlp,
     };
 
     TPM_DEBUG("mainLoop:\n");
+
+    /* Required in the notify callback routine. */
+    mainloopparams = mlp;
 
     max_command_length = tpmlib_get_tpm_property(TPMPROP_TPM_BUFFER_MAX) +
                          sizeof(struct tpm2_send_command_prefix);
