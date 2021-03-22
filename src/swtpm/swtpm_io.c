@@ -59,7 +59,6 @@
 #include <sys/uio.h>
 
 #include <libtpms/tpm_error.h>
-#include <libtpms/tpm_error.h>
 #include <libtpms/tpm_types.h>
 
 #include "logging.h"
