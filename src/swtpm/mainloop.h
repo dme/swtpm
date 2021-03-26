@@ -56,6 +56,7 @@ struct mainLoopParams {
 #define MAIN_LOOP_FLAG_END_ON_HUP (1 << 3)
 
     int fd;
+    int notifyfd;
     struct ctrlchannel *cc;
     uint32_t locality_flags;
     TPMLIB_TPMVersion tpmversion;

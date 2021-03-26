@@ -210,6 +210,7 @@ int swtpm_main(int argc, char **argv, const char *prgname, const char *iface)
         .cc = NULL,
         .flags = 0,
         .fd = -1,
+        .notifyfd = -1,
         .locality_flags = 0,
         .tpmversion = TPMLIB_TPM_VERSION_1_2,
         .startupType = _TPM_ST_NONE,

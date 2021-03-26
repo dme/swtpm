@@ -246,6 +246,7 @@ typedef struct ptm_getinfo ptm_getinfo;
 #define PTM_CAP_SET_BUFFERSIZE     (1 << 13)
 #define PTM_CAP_GET_INFO           (1 << 14)
 #define PTM_CAP_SEND_COMMAND_HEADER (1 << 15)
+#define PTM_CAP_SET_NOTIFYFD       (1 << 16)
 
 enum {
     PTM_GET_CAPABILITY     = _IOR('P', 0, ptm_cap),
@@ -266,6 +267,7 @@ enum {
     PTM_SET_DATAFD         = _IOR('P', 15, ptm_res),
     PTM_SET_BUFFERSIZE     = _IOWR('P', 16, ptm_setbuffersize),
     PTM_GET_INFO           = _IOWR('P', 17, ptm_getinfo),
+    PTM_SET_NOTIFYFD       = _IOR('P', 18, ptm_res),
 };
 
 /*
@@ -297,6 +299,7 @@ enum {
     CMD_SET_DATAFD,           /* 0x10 */
     CMD_SET_BUFFERSIZE,       /* 0x11 */
     CMD_GET_INFO,             /* 0x12 */
+    CMD_SET_NOTIFYFD,         /* 0x13 */
 };
 
 #endif /* _TPM_IOCTL_H */

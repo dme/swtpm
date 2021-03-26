@@ -448,7 +448,8 @@ static uint64_t get_ptm_caps_supported(TPMLIB_TPMVersion tpmversion)
             | PTM_CAP_SET_DATAFD
 #endif
             | PTM_CAP_SET_BUFFERSIZE
-            | PTM_CAP_GET_INFO;
+            | PTM_CAP_GET_INFO
+            | PTM_CAP_SET_NOTIFYFD;
     if (tpmversion == TPMLIB_TPM_VERSION_2)
         caps |= PTM_CAP_SEND_COMMAND_HEADER;
 
@@ -856,6 +857,27 @@ int ctrlchannel_process_fd(int fd,
 
         out_len = offsetof(ptm_getinfo, u.resp.buffer) + length;
 
+        break;
+
+    case CMD_SET_NOTIFYFD:
+        if (mlp->notifyfd != -1)
+            goto err_io;
+
+        cmsg = CMSG_FIRSTHDR(&msg);
+        if (!cmsg || cmsg->cmsg_len < CMSG_LEN(sizeof(int)) ||
+             cmsg->cmsg_level != SOL_SOCKET ||
+             cmsg->cmsg_type != SCM_RIGHTS ||
+             !(data_fd = (int *)CMSG_DATA(cmsg)) ||
+             *data_fd < 0) {
+            logprintf(STDERR_FILENO, "no valid data socket in message; cmsg = "
+                                     "%p", cmsg);
+            goto err_bad_input;
+        }
+
+        mlp->notifyfd = *data_fd;
+
+        *res_p = htobe32(TPM_SUCCESS);
+        out_len = sizeof(ptm_res);
         break;
 
     default:

@@ -332,5 +332,10 @@ skip_process:
         mlp->fd = -1;
     }
 
+    if (mlp->notifyfd >= 0) {
+	close(mlp->notifyfd);
+	mlp->notifyfd = -1;
+    }
+
     return rc;
 }
