@@ -80,6 +80,13 @@ mainloop_cb_get_locality(TPM_MODIFIER_INDICATOR *loc,
     return TPM_SUCCESS;
 }
 
+TPM_RESULT
+mainloop_cb_notify(const char *data,
+		   const uint32_t length)
+{
+    return TPM_SUCCESS;
+}
+
 int mainLoop(struct mainLoopParams *mlp,
              int notify_fd)
 {

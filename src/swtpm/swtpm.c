@@ -84,6 +84,7 @@ static struct libtpms_callbacks callbacks = {
     .tpm_nvram_deletename    = SWTPM_NVRAM_DeleteName,
     .tpm_io_init             = SWTPM_IO_Init,
     .tpm_io_getlocality      = mainloop_cb_get_locality,
+    .tpm_notify              = mainloop_cb_notify,
 };
 
 static void sigterm_handler(int sig __attribute__((unused)))
